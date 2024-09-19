@@ -1,2 +1,2 @@
 # Programmation-Web
-Web programming about shopping web pages
+Web programming about cooking recipes web pages
