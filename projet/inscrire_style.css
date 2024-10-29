@@ -1,0 +1,30 @@
+/* styles.css */
+/* pour inscrire.php */
+.container {
+    max-width: 600px;
+	margin-left: 275px;
+    /*margin: auto;*/
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input, select {
+    padding: 5px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+}
+
+.error {
+    color: red;
+}
+
