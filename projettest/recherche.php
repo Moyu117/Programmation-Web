@@ -16,6 +16,12 @@ function parse_search_query($query, $Hierarchie) {
     // 检查双引号数量
     if (substr_count($query, '"') % 2 !== 0) {
         $error_message = "Problème de syntaxe dans votre requête : nombre impair de double-quotes";
+        return [
+            'desired' => $desired,
+            'undesired' => $undesired,
+            'unrecognized' => $unrecognized,
+            'error' => $error_message
+        ];
     }
 
     // 使用正则表达式匹配带 + 或 - 的成分，支持双引号包裹的成分
@@ -154,11 +160,20 @@ function getAllSubIngredients($ingredient, $Hierarchie) {
  */
 function perform_search($query, $Recettes, $Hierarchie) {
     $search_results = [];
+    $desired_ingredients = [];
+    $undesired_ingredients = [];
+    $unrecognized_elements = [];
+    $error_message = '';
+
+    // 调用 parse_search_query 并检查错误
     $parsed_query = parse_search_query($query, $Hierarchie);
 
     if (!empty($parsed_query['error'])) {
         return [
             'error_message' => $parsed_query['error'],
+            'desired_ingredients' => $desired_ingredients,
+            'undesired_ingredients' => $undesired_ingredients,
+            'unrecognized_elements' => $unrecognized_elements,
             'search_results' => []
         ];
     }
