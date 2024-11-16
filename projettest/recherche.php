@@ -13,29 +13,24 @@ function parse_search_query($query, $Hierarchie) {
     $undesired = [];
     $unrecognized = [];
 
-    // 按空格分割查询
-    $tokens = preg_split('/\s+/', $query);
+    // 检查双引号数量
+    if (substr_count($query, '"') % 2 !== 0) {
+        return ['error' => "Problème de syntaxe dans votre requête : nombre impair de double-quotes"];
+    }
 
-    foreach ($tokens as $token) {
-        $token = trim($token);
-        if ($token === '') {
-            continue;
-        }
-
-        // 检查第一个字符
+    // 使用正则表达式匹配带 + 或 - 的成分，支持双引号包裹的成分
+    preg_match_all('/([\+\-]?"[^"]+"|[\+\-]?\S+)/', $query, $matches);
+    
+    foreach ($matches[0] as $token) {
         $first_char = substr($token, 0, 1);
-        if ($first_char === '+') {
-            $ingredient = substr($token, 1);
-            if ($ingredient !== '') {
-                $desired[] = $ingredient;
-            }
-        } elseif ($first_char === '-') {
-            $ingredient = substr($token, 1);
-            if ($ingredient !== '') {
-                $undesired[] = $ingredient;
-            }
+
+        // 去除符号和双引号
+        $ingredient = trim($token, '+-"');
+
+        if ($first_char === '-') {
+            $undesired[] = $ingredient;
         } else {
-            $desired[] = $token;
+            $desired[] = $ingredient;
         }
     }
 
@@ -43,13 +38,13 @@ function parse_search_query($query, $Hierarchie) {
     list($valid_desired, $invalid_desired) = validate_ingredients($desired, $Hierarchie);
     list($valid_undesired, $invalid_undesired) = validate_ingredients($undesired, $Hierarchie);
 
-    // 合并未识别的元素
     $unrecognized = array_merge($invalid_desired, $invalid_undesired);
 
     return [
         'desired' => $valid_desired,
         'undesired' => $valid_undesired,
-        'unrecognized' => $unrecognized
+        'unrecognized' => $unrecognized,
+        'error' => ''
     ];
 }
 
@@ -158,32 +153,34 @@ function getAllSubIngredients($ingredient, $Hierarchie) {
  * @return array 包含解析结果和搜索结果
  */
 function perform_search($query, $Recettes, $Hierarchie) {
-    $error_message = '';
-    $desired_ingredients = [];
-    $undesired_ingredients = [];
-    $unrecognized_elements = [];
     $search_results = [];
+    $parsed_query = parse_search_query($query, $Hierarchie);
 
-    if (trim($query) !== '') {
-        // 解析搜索查询
-        $parsed_query = parse_search_query($query, $Hierarchie);
-        $desired_ingredients = $parsed_query['desired'];
-        $undesired_ingredients = $parsed_query['undesired'];
-        $unrecognized_elements = $parsed_query['unrecognized'];
-
-        // 检查是否有可用的搜索条件
-        if (empty($desired_ingredients) && empty($undesired_ingredients)) {
-            $error_message = "Problème dans votre requête : recherche impossible";
-        } else {
-            // 执行搜索
-            $search_results = search_recipes($desired_ingredients, $undesired_ingredients, $Recettes, $Hierarchie);
-        }
-    } else {
-        $error_message = "Veuillez entrer une requête de recherche.";
+    if (!empty($parsed_query['error'])) {
+        return [
+            'error_message' => $parsed_query['error'],
+            'search_results' => []
+        ];
     }
 
+    $desired_ingredients = $parsed_query['desired'];
+    $undesired_ingredients = $parsed_query['undesired'];
+    $unrecognized_elements = $parsed_query['unrecognized'];
+
+    if (empty($desired_ingredients) && empty($undesired_ingredients)) {
+        return [
+            'error_message' => "Problème dans votre requête : recherche impossible",
+            'desired_ingredients' => $desired_ingredients,
+            'undesired_ingredients' => $undesired_ingredients,
+            'unrecognized_elements' => $unrecognized_elements,
+            'search_results' => []
+        ];
+    }
+
+    $search_results = search_recipes($desired_ingredients, $undesired_ingredients, $Recettes, $Hierarchie);
+
     return [
-        'error_message' => $error_message,
+        'error_message' => '',
         'desired_ingredients' => $desired_ingredients,
         'undesired_ingredients' => $undesired_ingredients,
         'unrecognized_elements' => $unrecognized_elements,
