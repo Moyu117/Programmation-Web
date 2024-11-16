@@ -12,10 +12,10 @@ function parse_search_query($query, $Hierarchie) {
     $desired = [];
     $undesired = [];
     $unrecognized = [];
-
+    $error_message = '';
     // 检查双引号数量
     if (substr_count($query, '"') % 2 !== 0) {
-        return ['error' => "Problème de syntaxe dans votre requête : nombre impair de double-quotes"];
+        $error_message = "Problème de syntaxe dans votre requête : nombre impair de double-quotes";
     }
 
     // 使用正则表达式匹配带 + 或 - 的成分，支持双引号包裹的成分
