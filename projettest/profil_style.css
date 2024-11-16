@@ -1,0 +1,38 @@
+/* profil.css */
+
+/* 设置个人资料页面的样式 */
+.container {
+    max-width: 600px;
+    margin-left:275px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.form-group label {
+    width: 150px;
+    margin-right: 10px;
+}
+
+.form-group input,
+.form-group select {
+    flex: 1;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+}
+
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}

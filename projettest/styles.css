@@ -1,0 +1,188 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+	/*
+    background-color: #f1f1f1;
+    padding: 10px;
+	position:fixed;
+	*/
+	/*----------ver2------------*/
+	position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f1f1f1;
+    padding: 10px;
+    z-index: 1000; /*dans le premiere*/
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /*ombre */
+}
+
+nav {
+    display: flex;
+    justify-content:  flex-start;
+    align-items: center;
+	/*gap: 15px;*/
+	
+    	
+}
+
+.recherchetext{
+	 margin-left: 200px;
+}
+
+.logintext{
+	margin-left: 220px;
+}
+
+/*
+.Navigation{
+	position: fixed;
+    top: 10px;  
+    left: 20px;   
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+*/
+
+
+nav button,input {
+    margin: 0 5px;
+    padding: 5px 10px;
+}
+
+main {
+	margin-left: 300px; /* pour gauche */
+    margin-top: 80px; /* pour top */
+    display: flex;
+}
+
+aside {
+	/*
+	position:fixed;
+    width: 200px;
+    padding: 20px;
+    background-color: #e9e9e9;
+	*/
+/*--------------ver2----------------*/
+	position: fixed;
+    top: 50px; /* 距离顶部导航栏的高度 */
+    left: 0;
+    width: 200px;
+    height: 100%; /* 占据整个屏幕高度 */
+    background-color: #e9e9e9;
+    padding: 20px;
+    overflow-y: auto; /* si trop long */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* ombre */
+}
+
+/*suprimer le point sur gauche*/
+aside ul {
+    list-style-type: none;
+    padding: 0;
+}
+/*Espacement des lignes de texte de la liste*/
+aside ul li {
+    margin: 10px 0;
+}
+
+aside ul li a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+.cocktail-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: center; /* 中心对齐所有鸡尾酒卡片 */
+}
+
+.cocktail-item {
+    width: 300px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative; /* 设置父容器为相对定位 */
+    background-color: #f9f9f9; /* 添加背景颜色，使卡片更明显 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 为卡片添加阴影效果 */
+    transition: transform 0.2s, box-shadow 0.2s; /* 鼠标悬停时增加动画效果 */
+}
+
+.cocktail-item:hover {
+    transform: translateY(-10px); /* 鼠标悬停时提升卡片 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 鼠标悬停时增加阴影 */
+}
+
+.cocktail-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 15px; /* 图片与成分列表之间添加间距 */
+}
+
+.cocktail-item ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.cocktail-item ul li {
+    margin: 5px 0;
+    font-size: 0.9em; /* 成分文字稍微小一点 */
+}
+
+.cocktail-title {
+    text-align: center;
+    margin: 0;
+    padding-right: 30px; /* 使心形符号有额外空间 */
+    font-weight: bold; /* 加粗标题 */
+}
+
+.heart {
+    position: absolute; /* 绝对定位 */
+    top: 10px; /* 距离父容器顶部 10px */
+    right: 10px; /* 距离父容器右侧 10px */
+    font-size: 1.5em;
+    color: red;
+}
+.heart {
+    color: grey;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.heart.filled {
+    color: red;
+}
+
+.heart:hover {
+    cursor: pointer;
+}
+
+a{
+  text-decoration: none;
+  color: inherit; /* 使用父元素的颜色 */
+}
+
+.login span {  /*apres connecter */
+    margin-left: 400px; /* 增加左侧间距 */
+}
+/*percentage*/ 
+.match-percentage {
+    color: #007BFF;
+    font-weight: bold;
+    margin-top: 10px;
+}
