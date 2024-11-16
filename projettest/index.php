@@ -84,10 +84,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_G
 
     // 提取返回的数据
     $error_message = $search_data['error_message'];
-    $desired_ingredients = $search_data['desired_ingredients'];
-    $undesired_ingredients = $search_data['undesired_ingredients'];
-    $unrecognized_elements = $search_data['unrecognized_elements'];
-    $search_results = $search_data['search_results'];
+    $desired_ingredients = $search_data['desired_ingredients'] ?? [];
+    $undesired_ingredients = $search_data['undesired_ingredients'] ?? [];
+    $unrecognized_elements = $search_data['unrecognized_elements'] ?? [];
+    $search_results = $search_data['search_results'] ?? [];
     }
     
 include 'header.php'; // 包含头部导航
