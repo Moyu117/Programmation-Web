@@ -17,7 +17,7 @@
             </a>
             <!-- 搜索表单开始 -->
             <form method="GET" action="index.php" style="display:inline;">
-            <input class="recherchetext" type="text" name="recherche" placeholder="Rechercher une recette">
+            <input class="recherchetext" type="text" name="recherche" placeholder='"Jus de fruits" +Sel -Whisky'">
             <button type="submit">Recherche</button>
             </form>
 
