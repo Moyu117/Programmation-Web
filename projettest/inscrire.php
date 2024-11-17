@@ -2,30 +2,27 @@
 session_start();
 ?>
 <?php
-// 如果用户已登录，重定向到主页
+// si connect,retourner
 if (isset($_SESSION['user'])) {
     header('Location: index.php');
     exit();
 }
 
-// 处理注册请求
+// inscrire demande
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 读取用户数据
     $users = [];
     if (file_exists('user.json')) {
         $json = file_get_contents('user.json');
         $users = json_decode($json, true);
     }
 
-    // 获取表单数据
+    // obtenir des list de inscrire
     $login = trim($_POST['login']);
     $password = $_POST['password'];
     $Nom = trim($_POST['Nom']);
     $prenom = trim($_POST['prenom']);
     $gender = $_POST['gender'];
     $birthDate = $_POST['birthDate'];
-
-    // 数据验证
     $errors = [];
 
     if (!preg_match('/^[A-Za-z0-9]+$/', $login)) {
@@ -53,10 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        // 密码哈希
+        // hash
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // 存储用户数据
+        //stoker
         $users[$login] = [
             'login' => $login,
             'password' => $hashedPassword,
@@ -65,10 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'gender' => $gender,
             'birthDate' => $birthDate
         ];
-
         file_put_contents('user.json', json_encode($users));
-
-        // 注册成功，重定向到登录页面
         header('Location: index.php');
         exit();
     }

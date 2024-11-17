@@ -15,13 +15,12 @@
             <a href="favorites.php">
                 <button class="Recettes">Recettes ❤</button>
             </a>
-            <!-- 搜索表单开始 -->
+            <!-- recherche -->
             <form method="GET" action="index.php" style="display:inline;">
             <input class="recherchetext" type="text" name="recherche" placeholder='"Jus de fruits" +Sel -Whisky'">
             <button type="submit">Recherche</button>
             </form>
 
-            <!-- 搜索表单结束 -->
             <div class="login">
                 <?php if (!isset($_SESSION['user'])): ?> 
                 <form method="post" action="index.php" style="display:inline;">

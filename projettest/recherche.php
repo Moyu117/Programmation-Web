@@ -1,19 +1,19 @@
 <?php
 // recherche.php
 
-/**
- * 解析用户的搜索查询
+/*
+ * Analyser la requête de recherche d'un utilisateur
  *
- * @param string $query 用户输入的搜索字符串
- * @param array $Hierarchie 食材层次结构数组
- * @return array 包含解析后的想要的食材、不想要的食材和未识别的元素
+ * $query Chaîne de recherche saisie par l'utilisateur
+ * $Hierarchie Niveau d'ingrédient
+ * returner les ingrédients souhaités analysés, les ingrédients indésirables et les éléments non reconnus
  */
 function parse_search_query($query, $Hierarchie) {
     $desired = [];
     $undesired = [];
     $unrecognized = [];
     $error_message = '';
-    // 检查双引号数量
+    // Vérifiez “ ”
     if (substr_count($query, '"') % 2 !== 0) {
         $error_message = "Problème de syntaxe dans votre requête : nombre impair de double-quotes";
         return [
@@ -24,13 +24,13 @@ function parse_search_query($query, $Hierarchie) {
         ];
     }
 
-    // 使用正则表达式匹配带 + 或 - 的成分，支持双引号包裹的成分
+    //  + ，- 
     preg_match_all('/([\+\-]?"[^"]+"|[\+\-]?\S+)/', $query, $matches);
     
     foreach ($matches[0] as $token) {
         $first_char = substr($token, 0, 1);
 
-        // 去除符号和双引号
+        // Supprimer les symboles et les “”
         $ingredient = trim($token, '+-"');
 
         if ($first_char === '-') {
@@ -40,7 +40,7 @@ function parse_search_query($query, $Hierarchie) {
         }
     }
 
-    // 验证食材
+    // verifier
     list($valid_desired, $invalid_desired) = validate_ingredients($desired, $Hierarchie);
     list($valid_undesired, $invalid_undesired) = validate_ingredients($undesired, $Hierarchie);
 
@@ -54,19 +54,19 @@ function parse_search_query($query, $Hierarchie) {
     ];
 }
 
-/**
- * 验证食材是否存在于食材层次结构中
+/*
+ * Vérifier qu'un ingrédient existe dans la hiérarchie des ingrédients
  *
- * @param array $ingredients 要验证的食材列表
- * @param array $Hierarchie 食材层次结构数组
- * @return array 包含有效的食材和无效的食材
+ *  $ingredients Liste des ingrédients à vérifier
+ *  $Hierarchie Hierarchie Niveau d'ingrédient
+ * return  utile et non utile
  */
 function validate_ingredients($ingredients, $Hierarchie) {
     $valid = [];
     $invalid = [];
 
     foreach ($ingredients as $ingredient) {
-        // 将食材名称标准化
+        // nom des aliment
         $ingredient_normalized = ucfirst(strtolower($ingredient));
 
         if (array_key_exists($ingredient_normalized, $Hierarchie)) {
@@ -79,14 +79,14 @@ function validate_ingredients($ingredients, $Hierarchie) {
     return [$valid, $invalid];
 }
 
-/**
- * 执行食谱搜索
+/*
+ * une recherche de recette
  *
- * @param array $desired_ingredients 想要的食材列表
- * @param array $undesired_ingredients 不想要的食材列表
- * @param array $Recettes 食谱数组
- * @param array $Hierarchie 食材层次结构数组
- * @return array 搜索结果，包含匹配的食谱和满意度分数
+ * $desired_ingredients Liste des souhaités
+ * $undesired_ingredients Liste des non souhaités
+ * $Recettes 
+ * $Hierarchie hiérarchique des ingrédients
+ * returner Résultats de recherche avec recettes et note de satisfaction
  */
 function search_recipes($desired_ingredients, $undesired_ingredients, $Recettes, $Hierarchie) {
     $results = [];
@@ -94,19 +94,19 @@ function search_recipes($desired_ingredients, $undesired_ingredients, $Recettes,
     foreach ($Recettes as $recette) {
         $recipe_ingredients = $recette['index'];
 
-        // 将食谱的食材扩展为包括所有子食材
+        // Développez les ingrédients d'une recette pour tous les sous-ingrédients
         $expanded_ingredients = [];
         foreach ($recipe_ingredients as $ing) {
             $expanded_ingredients = array_merge($expanded_ingredients, getAllSubIngredients($ing, $Hierarchie));
         }
         $expanded_ingredients = array_unique($expanded_ingredients);
 
-        // 检查是否包含不想要的食材
+        // Ignorer les recettes contenant des ingrédients indésirables
         if (array_intersect($undesired_ingredients, $expanded_ingredients)) {
-            continue; // 跳过包含不想要食材的食谱
+            continue;
         }
 
-        // 计算匹配的想要的食材数量
+        // Calculer le nombre d'ingrédients souhaités correspondants
         $matched_desired = array_intersect($desired_ingredients, $expanded_ingredients);
         $matched_count = count($matched_desired);
         $total_criteria = count($desired_ingredients);
@@ -116,13 +116,11 @@ function search_recipes($desired_ingredients, $undesired_ingredients, $Recettes,
         } else {
             $score = 0;
         }
-
-        // **修改这里：将所有食谱都加入结果**
         $recette['score'] = $score;
         $results[] = $recette;
     }
 
-    // 按照满意度分数排序
+    // Trier par note de satisfaction
     usort($results, function($a, $b) {
         return $b['score'] - $a['score'];
     });
@@ -131,12 +129,12 @@ function search_recipes($desired_ingredients, $undesired_ingredients, $Recettes,
 }
 
 
-/**
- * 获取指定食材的所有子食材
+/*
+ * Obtenez tous les sous-ingrédients de l'ingrédient spécifié
  *
- * @param string $ingredient 食材名称
- * @param array $Hierarchie 食材层次结构数组
- * @return array 包含所有子食材的数组
+ * $ingredient Nom de l'ingrédient
+ * $Hierarchie hiérarchique des ingrédients
+ * returner tableau contenant tous les sous-ingrédients
  */
 function getAllSubIngredients($ingredient, $Hierarchie) {
     $ingredients = [$ingredient];
@@ -151,12 +149,12 @@ function getAllSubIngredients($ingredient, $Hierarchie) {
 }
 
 /**
- * 执行完整的搜索流程
+ * le processus de recherche complet
  *
- * @param string $query 用户输入的搜索字符串
- * @param array $Recettes 食谱数组
- * @param array $Hierarchie 食材层次结构数组
- * @return array 包含解析结果和搜索结果
+ * $query Chaîne de recherche saisie par l'utilisateur
+ * $Recettes Tableau de recettes
+ * $Hierarchie  hiérarchique des ingrédients
+ * returner res
  */
 function perform_search($query, $Recettes, $Hierarchie) {
     $search_results = [];
@@ -165,7 +163,7 @@ function perform_search($query, $Recettes, $Hierarchie) {
     $unrecognized_elements = [];
     $error_message = '';
 
-    // 调用 parse_search_query 并检查错误
+    //verifer
     $parsed_query = parse_search_query($query, $Hierarchie);
 
     if (!empty($parsed_query['error'])) {

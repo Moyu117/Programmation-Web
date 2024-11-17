@@ -1,12 +1,12 @@
 <aside>
 <?php
-// 引入数据文件
+//include
 include('Donnees.inc.php');
 
-// 获取当前类别，默认为'Aliment'
+//Obtenez la catégorie actuelle, la valeur par défaut est Aliment
 $category = isset($_GET['cat']) ? $_GET['cat'] : 'Aliment';
 
-// 获取面包屑路径
+// Fil d'Ariane
 function getBreadcrumb($category, $Hierarchie) {
     $breadcrumb = array();
     while ($category != 'Aliment' && isset($Hierarchie[$category]['super-categorie'][0])) {
@@ -17,7 +17,7 @@ function getBreadcrumb($category, $Hierarchie) {
     return $breadcrumb;
 }
 
-// 显示面包屑导航
+// afficher
 $breadcrumb = getBreadcrumb($category, $Hierarchie);
 echo '<div class="breadcrumb">';
 foreach ($breadcrumb as $index => $cat) {
@@ -28,7 +28,7 @@ foreach ($breadcrumb as $index => $cat) {
 }
 echo '</div>';
 
-// 显示当前类别的直接子类别
+// afficher sous categorie
 echo '<h2>sous catégorie：</h2>';
 if (isset($Hierarchie[$category]['sous-categorie'])) {
     echo '<ul>';

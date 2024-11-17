@@ -76,10 +76,10 @@ aside {
 	*/
 /*--------------ver2----------------*/
 	position: fixed;
-    top: 50px; /* 距离顶部导航栏的高度 */
+    top: 50px; 
     left: 0;
     width: 200px;
-    height: 100%; /* 占据整个屏幕高度 */
+    height: 100%; 
     background-color: #e9e9e9;
     padding: 20px;
     overflow-y: auto; /* si trop long */
@@ -106,7 +106,7 @@ aside ul li a {
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px;
-    justify-content: center; /* 中心对齐所有鸡尾酒卡片 */
+    justify-content: center;
 }
 
 .cocktail-item {
@@ -115,22 +115,22 @@ aside ul li a {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    position: relative; /* 设置父容器为相对定位 */
-    background-color: #f9f9f9; /* 添加背景颜色，使卡片更明显 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 为卡片添加阴影效果 */
-    transition: transform 0.2s, box-shadow 0.2s; /* 鼠标悬停时增加动画效果 */
+    position: relative; 
+    background-color: #f9f9f9; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ombre */
+    transition: transform 0.2s, box-shadow 0.2s; /* animer */
 }
 
 .cocktail-item:hover {
-    transform: translateY(-10px); /* 鼠标悬停时提升卡片 */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 鼠标悬停时增加阴影 */
+    transform: translateY(-10px); /* Promouvoir la carte */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* ombre */
 }
 
 .cocktail-item img {
     max-width: 100%;
     height: auto;
     border-radius: 10px;
-    margin-bottom: 15px; /* 图片与成分列表之间添加间距 */
+    margin-bottom: 15px; 
 }
 
 .cocktail-item ul {
@@ -141,20 +141,20 @@ aside ul li a {
 
 .cocktail-item ul li {
     margin: 5px 0;
-    font-size: 0.9em; /* 成分文字稍微小一点 */
+    font-size: 0.9em; 
 }
 
 .cocktail-title {
     text-align: center;
     margin: 0;
     padding-right: 30px; /* 使心形符号有额外空间 */
-    font-weight: bold; /* 加粗标题 */
+    font-weight: bold; 
 }
 
 .heart {
-    position: absolute; /* 绝对定位 */
-    top: 10px; /* 距离父容器顶部 10px */
-    right: 10px; /* 距离父容器右侧 10px */
+    position: absolute; 
+    top: 10px; /* top 10px */
+    right: 10px; /* right 10px */
     font-size: 1.5em;
     color: red;
 }
@@ -174,7 +174,7 @@ aside ul li a {
 
 a{
   text-decoration: none;
-  color: inherit; /* 使用父元素的颜色 */
+  color: inherit; /* couleur de pere */
 }
 
 .login span {  /*apres connecter */

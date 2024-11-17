@@ -1,11 +1,11 @@
 <?php 
 session_start();
-include 'Donnees.inc.php'; // 包含数据
+include 'Donnees.inc.php'; 
 include 'recherche.php';
 
-// 用户登录处理
+// connexion des utilisateurs
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'login') {
-    // 读取用户数据
+    // Lire les données
     $users = [];
     if (file_exists('user.json')) {
         $json = file_get_contents('user.json');
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (isset($users[$login]) && password_verify($password, $users[$login]['password'])) {
         $_SESSION['user'] = $users[$login];
 
-        // 加载用户的收藏列表
+        // Charger la liste des favorable
         if (isset($users[$login]['favorites'])) {
             $_SESSION['favorites'] = $users[$login]['favorites'];
         }
@@ -27,32 +27,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// 处理注销
+// logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     session_destroy();
     header('Location: index.php');
     exit();
 }
 
-// 处理收藏状态的切换
+//changement de statut de favorable
 if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_GET['recipe'])) {
     $recipeTitle = $_GET['recipe'];
 
-    // 初始化收藏列表
+    // Initialise
     if (!isset($_SESSION['favorites'])) {
         $_SESSION['favorites'] = [];
     }
 
-    // 切换收藏状态
+    // changer etat 
     if (in_array($recipeTitle, $_SESSION['favorites'])) {
-        // 取消收藏
+        // annuler
         $_SESSION['favorites'] = array_diff($_SESSION['favorites'], [$recipeTitle]);
     } else {
-        // 添加收藏
+        // ajouter
         $_SESSION['favorites'][] = $recipeTitle;
     }
 
-    // 如果用户已登录，保存收藏到用户数据
+    // si connect
     if (isset($_SESSION['user'])) {
         $users = [];
         if (file_exists('user.json')) {
@@ -64,12 +64,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_G
         file_put_contents('user.json', json_encode($users));
     }
 
-    // 重定向回首页
     header('Location: index.php');
     exit();
 }
     
-	// 检查是否有搜索请求
+	// Vérifier demande de recherche
     $search_results = [];
     $desired_ingredients = [];
     $undesired_ingredients = [];
@@ -79,10 +78,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_G
 	if (isset($_GET['recherche']) && trim($_GET['recherche']) !== '') {
     $recherche = $_GET['recherche'];
     $is_search = true;
-    // 调用 perform_search 函数
+    // recherche
     $search_data = perform_search($recherche, $Recettes, $Hierarchie);
 
-    // 提取返回的数据
+    // retourne les resultat
     $error_message = $search_data['error_message'];
     $desired_ingredients = $search_data['desired_ingredients'] ?? [];
     $undesired_ingredients = $search_data['undesired_ingredients'] ?? [];
@@ -90,16 +89,16 @@ if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_G
     $search_results = $search_data['search_results'] ?? [];
     }
     
-include 'header.php'; // 包含头部导航
+include 'header.php'; 
 ?>
 <main>
 <?php
-include 'aside.php'; // 包含侧边栏
+include 'aside.php'; 
 ?>
 
 <div id="content">
     <?php
-    // 显示解析结果和错误消息
+    //afficher les res de recherche
     if (isset($error_message) && $error_message !== '') {
         echo '<p>' . htmlspecialchars($error_message) . '</p>';
     } else {
@@ -116,24 +115,21 @@ include 'aside.php'; // 包含侧边栏
         }
     }
 
-    // 检查并加载用户的收藏列表
+    
     if (isset($_SESSION['user']) && isset($_SESSION['user']['favorites'])) {
         $_SESSION['favorites'] = $_SESSION['user']['favorites'];
     } elseif (!isset($_SESSION['favorites'])) {
         $_SESSION['favorites'] = [];
     }
 
-    // 如果有搜索结果，使用搜索结果
+    // si recherche
     if (!empty($search_results)) {
         $recipes_to_display = $search_results;
     } else {
-        // 原有的类别筛选逻辑
-        // 获取选定的类别
         $category = isset($_GET['cat']) ? $_GET['cat'] : null;
 
-        // 如果选择了类别，获取所有子类别
+        // Si la catégorie est sélectionnée, obtenez toutes les sous-catégories
         if ($category) {
-            // 获取所有子类别的函数
             function getAllSubcategories($category, $Hierarchie) {
                 $subcategories = array();
                 if (isset($Hierarchie[$category]['sous-categorie'])) {
@@ -146,8 +142,7 @@ include 'aside.php'; // 包含侧边栏
             }
             $allCategories = array_merge(array($category), getAllSubcategories($category, $Hierarchie));
         }
-
-        // 如果选择了类别，筛选食谱
+        // filtrer les recettes
         if ($category) {
             $filteredRecipes = array();
             foreach ($Recettes as $recette) {
@@ -162,39 +157,28 @@ include 'aside.php'; // 包含侧边栏
         }
     }
 
-    // 显示食谱列表
+    // afficher les recettes
     if (!empty($recipes_to_display)) {
         echo '<div class="cocktail-list">';
         foreach ($recipes_to_display as $cocktail) {
             $titre = $cocktail['titre'];
             echo '<div class="cocktail-item">';
             echo '<h3 class="cocktail-title">';
-
-            // 将标题包裹在链接中
             echo '<a href="recette.php?titre=' . urlencode($titre) . '">';
             echo htmlspecialchars($titre);
             echo '</a>';
-
-            // 判断是否已收藏
+            // verifier
             $isFavorite = in_array($titre, $_SESSION['favorites']);
-
-            // 设置心形图标的类名
             $heartClass = $isFavorite ? 'heart filled' : 'heart';
-
-            // 心形图标，点击后调用 toggle_favorite 动作
             echo '<a href="index.php?action=toggle_favorite&recipe=' . urlencode($titre) . '">';
             echo '<span class="' . $heartClass . '">❤</span>';
             echo '</a>';
-
             echo '</h3>';
-
-            // 图像处理
             $titreNormalized = strtolower(trim($cocktail['titre']));
             $titreNormalized = str_replace([' ', 'ï', 'ñ', "'"], ['_', 'i', 'n', ''], $titreNormalized);
             $imageName = $titreNormalized . '.jpg';
             $imagePath = 'Photos/' . $imageName;
-
-            // 仅当标题完全匹配图片名称时才匹配
+            // Correspond uniquement si le titre correspond exactement au nom de l'image
             $photosDir = 'Photos/';
             $matchedImage = 'default.jpg';
             foreach (glob($photosDir . '*.jpg') as $photo) {
@@ -204,8 +188,6 @@ include 'aside.php'; // 包含侧边栏
                 }
             }
             $imagePath = $photosDir . $matchedImage;
-
-            // 将图片包裹在链接中
             echo '<a href="recette.php?titre=' . urlencode($titre) . '">';
             if (file_exists($imagePath)) {
                 echo '<img src="' . $imagePath . '" alt="' . htmlspecialchars($cocktail['titre']) . '">';
@@ -214,12 +196,12 @@ include 'aside.php'; // 包含侧边栏
             }
             echo '</a>';
 
-            // 显示匹配度（如果存在）
+            // Afficher la percentage
            if ($is_search && isset($cocktail['score'])) {
             echo '<p class="match-percentage">Score de satisfaction : ' . round($cocktail['score'], 2) . '%</p>';
            }
 
-            // 显示成分
+            // afficher detail
             echo '<ul>';
             if (!empty($cocktail['ingredients'])) {
                 $ingredients = explode('|', $cocktail['ingredients']);

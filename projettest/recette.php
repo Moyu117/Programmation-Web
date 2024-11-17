@@ -1,34 +1,26 @@
 <?php
 session_start();
-include 'header.php'; // 包含头部导航
+include 'header.php';
 ?>
 <main>
 <?php
-include 'aside.php'; // 包含侧边栏
+include 'aside.php'; 
 ?>
 <div id="content">
     <?php
-    include 'Donnees.inc.php'; // 包含数据
-
-    // 处理收藏状态的切换
+    include 'Donnees.inc.php';
     if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_GET['recipe'])) {
         $recipeTitle = $_GET['recipe'];
-
-        // 初始化收藏列表
+        // initialiser
         if (!isset($_SESSION['favorites'])) {
             $_SESSION['favorites'] = [];
         }
-
-        // 切换收藏状态
+        // Changer le etat de favorites
         if (in_array($recipeTitle, $_SESSION['favorites'])) {
-            // 取消收藏
             $_SESSION['favorites'] = array_diff($_SESSION['favorites'], [$recipeTitle]);
         } else {
-            // 添加收藏
             $_SESSION['favorites'][] = $recipeTitle;
         }
-
-        // 如果用户已登录，保存收藏到用户数据
         if (isset($_SESSION['user'])) {
             $users = [];
             if (file_exists('user.json')) {
@@ -39,48 +31,33 @@ include 'aside.php'; // 包含侧边栏
             $users[$login]['favorites'] = $_SESSION['favorites'];
             file_put_contents('user.json', json_encode($users));
         }
-
-        // 重定向回当前页面
         header('Location: recette.php?titre=' . urlencode($recipeTitle));
         exit();
     }
 
     if (isset($_GET['titre'])) {
         $titre = $_GET['titre'];
-
-        // 检查并加载用户的收藏列表
         if (isset($_SESSION['user']) && isset($_SESSION['user']['favorites'])) {
             $_SESSION['favorites'] = $_SESSION['user']['favorites'];
         } elseif (!isset($_SESSION['favorites'])) {
             $_SESSION['favorites'] = [];
         }
 
-        // 查找对应的食谱信息
+        //cherche chaque cocktail
         foreach ($Recettes as $cocktail) {
             if ($cocktail['titre'] === $titre) {
                 echo '<div class="cocktail-item">';
                 echo '<h3 class="cocktail-title">' . htmlspecialchars($cocktail['titre']);
-
-                // 判断是否已收藏
                 $isFavorite = in_array($titre, $_SESSION['favorites']);
-
-                // 设置心形图标的类名
                 $heartClass = $isFavorite ? 'heart filled' : 'heart';
-
-                // 心形图标，点击后调用 toggle_favorite 动作
                 echo '<a href="recette.php?action=toggle_favorite&recipe=' . urlencode($titre) . '&titre=' . urlencode($titre) . '">';
                 echo '<span class="' . $heartClass . '">❤</span>';
                 echo '</a>';
-
                 echo '</h3>';
-
-                // 图像处理
                 $titreNormalized = strtolower(trim($cocktail['titre']));
                 $titreNormalized = str_replace([' ', 'ï', 'ñ', "'"], ['_', 'i', 'n', ''], $titreNormalized);
                 $imageName = $titreNormalized . '.jpg';
                 $imagePath = 'Photos/' . $imageName;
-
-                // 查找是否有部分匹配的图片
                 $photosDir = 'Photos/';
                 $matchedImage = 'default.jpg';
                 foreach (glob($photosDir . '*.jpg') as $photo) {
@@ -97,10 +74,10 @@ include 'aside.php'; // 包含侧边栏
                     echo '<img src="Photos/default.jpg" alt="Image not found">';
                 }
 
-                // 显示食谱的详细信息
+               
                 echo '<p>' . htmlspecialchars($cocktail['preparation']) . '</p>';
 
-                // 显示成分
+                
                 echo '<ul>';
                 if (!empty($cocktail['ingredients'])) {
                     $ingredients = explode('|', $cocktail['ingredients']);
