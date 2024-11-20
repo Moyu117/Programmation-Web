@@ -16,13 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $password = $_POST['password'];
 
     if (isset($users[$login])) {
-        // 使用 sha256 哈希验证密码
+        // sha256
         $hashedPassword = hash('sha256', $password);
 
         if ($hashedPassword === $users[$login]['password']) {
             $_SESSION['user'] = $users[$login];
 
-            // 加载收藏列表
+            // favorite
             if (isset($users[$login]['favorites'])) {
                 $_SESSION['favorites'] = $users[$login]['favorites'];
             }
