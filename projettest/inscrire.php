@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        // hash
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // nouveau:sha256
+        $hashedPassword = hash('sha256',$password);
 
         //stoker
         $users[$login] = [

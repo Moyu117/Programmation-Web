@@ -15,16 +15,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $login = trim($_POST['login']);
     $password = $_POST['password'];
 
-    if (isset($users[$login]) && password_verify($password, $users[$login]['password'])) {
-        $_SESSION['user'] = $users[$login];
+    if (isset($users[$login])) {
+        // 使用 sha256 哈希验证密码
+        $hashedPassword = hash('sha256', $password);
 
-        // Charger la liste des favorable
-        if (isset($users[$login]['favorites'])) {
-            $_SESSION['favorites'] = $users[$login]['favorites'];
+        if ($hashedPassword === $users[$login]['password']) {
+            $_SESSION['user'] = $users[$login];
+
+            // 加载收藏列表
+            if (isset($users[$login]['favorites'])) {
+                $_SESSION['favorites'] = $users[$login]['favorites'];
+            }
+        } else {
+            $login_error = 'Nom d\'utilisateur ou mot de passe incorrect.';
         }
     } else {
         $login_error = 'Nom d\'utilisateur ou mot de passe incorrect.';
     }
+
 }
 
 // logout
@@ -83,10 +91,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_G
 
     // retourne les resultat
     $error_message = $search_data['error_message'];
-    $desired_ingredients = $search_data['desired_ingredients'] ?? [];
-    $undesired_ingredients = $search_data['undesired_ingredients'] ?? [];
-    $unrecognized_elements = $search_data['unrecognized_elements'] ?? [];
-    $search_results = $search_data['search_results'] ?? [];
+    $desired_ingredients = $search_data['desired_ingredients'] ;
+    $undesired_ingredients = $search_data['undesired_ingredients'];
+    $unrecognized_elements = $search_data['unrecognized_elements'];
+    $search_results = $search_data['search_results'];
     }
     
 include 'header.php'; 
