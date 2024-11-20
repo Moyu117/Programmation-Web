@@ -70,6 +70,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'toggle_favorite' && isset($_G
         $login = $_SESSION['user']['login'];
         $users[$login]['favorites'] = $_SESSION['favorites'];
         file_put_contents('user.json', json_encode($users));
+	$_SESSION['user']['favorites'] = $_SESSION['favorites'];
     }
 
     header('Location: index.php');
