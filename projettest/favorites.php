@@ -39,6 +39,7 @@ include 'aside.php'; // left
             $login = $_SESSION['user']['login'];
             $users[$login]['favorites'] = $_SESSION['favorites'];
             file_put_contents('user.json', json_encode($users));
+            $_SESSION['user']['favorites'] = $_SESSION['favorites'];
         }
 
         //retourner
